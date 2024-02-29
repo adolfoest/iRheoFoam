@@ -1,0 +1,97 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      blockMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#include "caseParameters"
+
+#codeStream{ 
+code
+	#{
+	 	Info<< "-------------------------" << endl
+	 		<< "Mesh resolution = " << $cpw << " cpw" << endl
+	 		<< "nx = " << $nx << " cells" << endl
+	 		<< "-------------------------" << endl;
+	#};
+}
+
+vertices
+(
+    ( $x0  $y0  $z0)
+    ( $x1  $y0  $z0)
+    ( $x1  $y1  $z0)
+    ( $x0  $y1  $z0)
+    ( $x0  $y0  $z1)
+    ( $x1  $y0  $z1)
+    ( $x1  $y1  $z1)
+    ( $x0  $y1  $z1)
+
+);
+
+blocks
+(
+    hex (0 1 2 3 4 5 6 7) ($nx $ny $nz) simpleGrading (1 1 1)
+);
+
+edges
+(
+);
+
+boundary
+(
+    walls
+    {
+        type wall;
+        faces
+        (
+            (3 7 6 2)
+            (1 5 4 0)
+            (0 4 7 3)
+            (2 6 5 1)
+        );
+    }
+
+    front
+    {
+        type wall;
+        faces
+        (
+            (4 5 6 7)
+        );
+    }
+    back
+    {
+        type wall;
+        faces
+        (
+            (0 3 2 1)
+        );
+    }
+    
+    /*staticRod
+    {
+    	type wall;
+    	faces
+    	();
+    }
+    
+    movingRod
+    {
+    	type wall;
+    	faces
+    	();
+    }*/
+);
+
+
+// ************************************************************************* //

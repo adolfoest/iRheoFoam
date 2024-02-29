@@ -1,0 +1,62 @@
+set terminal pngcairo truecolor enhanced size 800,600 font "Times, 18"
+set output "fig5a.png" 
+
+f(x) = abs(x)
+g(x) = x
+
+lineSize=1
+set style line 1 dt 1 lw lineSize lc rgb "#8E00FF"
+set style line 2 dt 1 lw lineSize lc rgb "#5939FF"
+set style line 3 dt 1 lw lineSize lc rgb "#007EFF"
+set style line 4 dt 1 lw lineSize lc rgb "#00B8FC"
+set style line 5 dt 1 lw lineSize lc rgb "#00E1DF"
+set style line 6 dt 1 lw lineSize lc rgb "#00FBC9"
+set style line 7 dt 1 lw lineSize lc rgb "#19FFAD"
+set style line 8 dt 1 lw lineSize lc rgb "#8DF990"
+set style line 9 dt 1 lw lineSize lc rgb "#D3DE72"
+set style line 10 dt 1 lw lineSize lc rgb "#FFAF4C"
+set style line 11 dt 1 lw lineSize lc rgb "#FF7528"
+set style line 12 dt 1 lw lineSize lc rgb "#FF1E00"
+set style line 13 dt 1 lw lineSize lc rgb "#FF0000"
+
+
+set xlabel "x"
+set ylabel "{/Symbol G}" 
+
+set key reverse spacing 1.4 Left samplen 1.5 top right outside box title "Ma" offset 0,0.16
+#set logscale x
+#unset key
+
+set ytics 0.8,0.2,1.8
+set mytics 2
+
+set xtics -20,10,20
+set mxtics 2
+
+#set xrange [0:10]
+set yrange [0.88:1.65]
+
+set format y "%.1f"
+
+set size square
+
+plot \
+"data/Ma0.01-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "0.01" w l ls 1,\
+"data/Ma0.1-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "0.1" w l ls 2,\
+"data/Ma1-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "1" w l ls 3,\
+"data/Ma2-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "2" w l ls 4,\
+"data/Ma5-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "5" w l ls 5,\
+"data/Ma7-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "7" w l ls 6,\
+"data/Ma10-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "10" w l ls 7,\
+"data/Ma20-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "20" w l ls 8,\
+"data/Ma30-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "30" w l ls 9,\
+"data/Ma40-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "40" w l ls 10,\
+"data/Ma50-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "50" w l ls 11,\
+"data/Ma70-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "70" w l ls 12,\
+"data/Ma100-Pes1-Bq0.001-Bqk0.001.txt" u 1:3 title "100" w l ls 13
+
+
+ 
+
+
+

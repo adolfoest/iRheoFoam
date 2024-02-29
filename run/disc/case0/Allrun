@@ -1,0 +1,29 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+./clean
+
+runApplication simpleRheoFoam > log
+
+postProcess -func "singleGraphG" -latestTime
+
+Ma=$(grep -e '^Ma' constant/transportProperties | sed 's/.$//' | awk '{print $2}')
+Pes=$(grep -e '^Pes' constant/transportProperties | sed 's/.$//' | awk '{print $2}')
+Bq=$(grep -e '^Bq' constant/transportProperties | sed '$d;s/.$//' | awk '{print $2}')
+Bqk=$(grep -e '^Bqk' constant/transportProperties | sed 's/.$//' | awk '{print $2}')
+
+endTime=$(grep -e '^endTime' system/controlDict | sed 's/.$//' | awk '{print $2}')
+
+
+cat postProcessing/singleGraphS/$endTime/line1_divU_gamma.xy postProcessing/singleGraphS/$endTime/line2_divU_gamma.xy >> "Ma${Ma}-Pes${Pes}-Bq${Bq}-Bqk${Bqk}.txt"
+sed -i '/-1 /G' "Ma${Ma}-Pes${Pes}-Bq${Bq}-Bqk${Bqk}.txt"
+
+echo "File Ma${Ma}-Pes${Pes}-Bq${Bq}-Bqk${Bqk}.txt created"
+
+./getForces
+
+mv forces.txt "f-Ma${Ma}-Pes${Pes}-Bq${Bq}-Bqk${Bqk}.txt"
+
+#------------------------------------------------------------------------------

@@ -1,0 +1,27 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+rm -r fBq-numerical.txt
+
+for i in Ma*
+do
+	echo $i
+	line=$(tail -n 1 $i/postProcessing/forces/0/force.dat)
+	tot=$(echo $line | awk '{print $2}' | sed 's/(//g' | awk '{printf "%.8f", $0}')
+	ma=$(echo $line | awk '{print $5}' | sed 's/(//g' | awk '{printf "%.8f", $0}')
+	s=$(echo $line | awk '{print $8}' | sed 's/(//g'| awk '{printf "%.8f", $0}')
+	bulk=$(echo $line | awk '{print $11}' | sed 's/(//g' | awk '{printf "%.8f", $0}')
+
+	bq=$(echo $i | sed -e 's#^Ma1e2-Pes1e6-Bq##; s#-Bqk1e4$##')
+
+	echo "$bq $tot $ma $s $bulk" >> fBq-numerical.txt
+done
+
+sort -g fBq-numerical.txt -o fBq-numerical.txt
+echo
+
+cat fBq-numerical.txt
+
+gnuplot disc-fBq
+#------------------------------------------------------------------------------

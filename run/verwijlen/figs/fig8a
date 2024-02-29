@@ -1,0 +1,63 @@
+set terminal pngcairo truecolor enhanced size 800,600 font "Times, 18"
+set output "fig8a.png" 
+
+f(x) = abs(x)
+g(x) = x/0.125
+
+lineSize=1
+set style line 10 dt 1 lw lineSize lc rgb "red"
+set style line 11 dt 3 lw lineSize lc rgb "red" 
+set style line 12 dt 6 lw lineSize lc rgb "red" 
+set style line 13 dt 4 lw lineSize lc rgb "red" 
+
+set style line 20 dt 1 lw lineSize lc rgb "blue" 
+set style line 21 dt 3 lw lineSize lc rgb "blue" 
+set style line 22 dt 6 lw lineSize lc rgb "blue" 
+set style line 23 dt 4 lw lineSize lc rgb "blue" 
+
+set style line 30 dt 1 lw lineSize lc rgb "web-green"
+set style line 31 dt 3 lw lineSize lc rgb "web-green"
+set style line 32 dt 6 lw lineSize lc rgb "web-green"
+set style line 33 dt 4 lw lineSize lc rgb "web-green" 
+
+set style line 40 dt 1 lw lineSize lc rgb "goldenrod"
+set style line 41 dt 3 lw lineSize lc rgb "goldenrod"
+set style line 42 dt 6 lw lineSize lc rgb "goldenrod"
+set style line 43 dt 4 lw lineSize lc rgb "goldenrod"
+
+set style line 50 dt 1 lw lineSize lc rgb "dark-violet"
+set style line 51 dt 3 lw lineSize lc rgb "dark-violet"
+set style line 52 dt 6 lw lineSize lc rgb "dark-violet"
+set style line 53 dt 4 lw lineSize lc rgb "dark-violet"
+
+set style line 60 dt 1 lw lineSize lc rgb "black"
+set style line 61 dt 3 lw lineSize lc rgb "black"
+set style line 62 dt 6 lw lineSize lc rgb "black"
+set style line 63 dt 4 lw lineSize lc rgb "black"
+
+set xlabel "{/:Italic t} [s]"
+set ylabel "{/:Italic F}"
+
+set key reverse spacing 1 Left samplen 1.5 top right
+
+set yrange [0:100]
+
+set mxtics 2
+#set ytics 0,.5,2
+set mytics 2
+
+set xrange [0:15]
+
+set xtics 0,5,20
+set mxtics 2
+
+plot \
+	"data/exp-6400.txt"	u 	1:2		notitle "Exp." w p pt 6 ps 1.2 lc rgb "black" ,\
+	"data/6400.txt" 	u (g(column(1))):(f(column(2))) title "Numerical" w l ls 20,\
+	"data/ver-6400.txt"	u 	1:2		notitle "Verwijlen" w l ls 12 ,\
+	NaN title "Numerical Verwijlen et al. (2012)" w l ls 12 ,\
+	NaN title "Experimental Verwijlen et al. (2012)" w p pt 6 ps 1.2 lc rgb "black" 
+ 
+
+
+

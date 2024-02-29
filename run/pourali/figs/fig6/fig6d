@@ -1,0 +1,44 @@
+set terminal pngcairo truecolor enhanced size 800,600 font "Times, 18"
+set output "fig6d.png" 
+
+lineSize=1
+
+set style line 60 dt 1 lw lineSize lc rgb "black"
+set style line 61 dt 3 lw lineSize lc rgb "black"
+
+set xlabel "Pe_s" 
+set ylabel "{/:Italic f}" 
+
+set key reverse spacing 1.4 Left samplen 1.5 bottom right maxrow 2
+set logscale x
+
+set ytics 9.5,0.5,11.5
+set mytics 2
+
+#set ytics 0,0.2,0.6
+#set mytics 2
+
+set format y "%.1f"
+set format x "%.0e"
+
+set xrange [0.0005:30]
+set yrange [9.4:11.55]
+
+set size square
+
+set label "Ma = 10" at 0.21,10.65
+set label "Ma = 20" at 0.002,10.5
+
+plot \
+	"data/forces10.txt" u 1:(abs($2)) notitle " " w lp ls 60 pt 7 ps 1.5,\
+	"data/forces20.txt" u 1:(abs($2)) notitle " " w lp ls 60 pt 11 ps 1.5,\
+	"data/forces10Pourali.txt" u 1:2 notitle " " w lp ls 61 pt 6 ps 1.5,\
+	"data/forces20Pourali.txt" u 1:2 notitle " " w lp ls 61 pt 10 ps 1.5,\
+	NaN title "Numerical" w l ls 60,\
+	NaN title "Pourali et al. (2021)" w l ls 61
+
+
+ 
+
+
+

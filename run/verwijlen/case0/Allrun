@@ -1,0 +1,20 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+runApplication $(getApplication)
+
+Ma=$(grep -e '^Ma' constant/transportProperties | sed 's/.$//' | awk '{print $2}')
+Pes=$(grep -e '^Pes' constant/transportProperties | sed 's/.$//' | awk '{print $2}')
+Theta=$(grep -e '^Theta' constant/transportProperties | sed 's/.$//' | awk '{print $2}')
+Tr=$(grep -e '^Tr' constant/transportProperties | sed 's/.$//' | awk '{print $2}')
+
+endTime=$(grep -e '^endTime' system/controlDict | sed 's/.$//' | awk '{print $2}')
+
+sed -i '/-1 /G' "Ma${Ma}-Pes${Pes}-Theta${Theta}-Tr${Tr}.txt"
+
+awk '{print $1,FS,$2}' postProcessing/forces/0/force.dat | sed 's/(//' > "forces-Ma${Ma}-Pes${Pes}-Theta${Theta}-Tr${Tr}.txt"
+
+
+#------------------------------------------------------------------------------

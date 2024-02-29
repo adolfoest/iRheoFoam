@@ -1,0 +1,33 @@
+// -*- C++ -*-
+
+// Sampling and I/O settings
+#includeEtc "caseDicts/postProcessing/graphs/sampleDict.cfg"
+
+type            		sets;
+libs            		(sampling);
+writeControl    		writeTime;
+interpolationScheme 	cellPoint;
+setFormat       		raw;
+fields          		( divU gamma );
+
+setConfig
+{
+    nPoints	5000;
+    axis    x; 
+}
+
+sets
+(
+    line1
+    {
+        $setConfig;
+        start (-20      0 	0); 
+        end   (-1    0 	0);
+    }
+    line2
+    {
+        $setConfig;
+        start ( 1  0 	0);
+        end   ( 20     0 	0);
+    }
+);

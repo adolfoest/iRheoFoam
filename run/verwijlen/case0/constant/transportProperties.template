@@ -1,0 +1,31 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2112                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    arch        "LSB;label=32;scalar=64";
+    class       dictionary;
+    location    "constant";
+    object      transportProperties;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+interfaceModel		extensionalViscosity;
+interfacePatch		front;
+movingPatch			movingRod;
+
+// Dimensionless numbers
+Theta 	THETA;
+Ma		MA;
+Tr		TR;
+Pes		PES;
+Bq		100;
+
+// Isotherm model for the calculation of the Marangoni modulus
+isothermModel       idealGas;
+// ************************************************************************* //

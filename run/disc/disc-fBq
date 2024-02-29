@@ -1,0 +1,33 @@
+set terminal pngcairo truecolor enhanced size 800,600 font "Times, 18"
+set output "disc-fBq.png" 
+
+f(x) = 2*abs(x)/(4*pi)
+g(x) = x
+h(x) = x
+
+set xlabel "Bq"
+set ylabel "{/:Italic f}/4{/Symbol p}"
+
+set key reverse spacing 1.4 Left samplen 1.5 top left
+
+set yrange [1:1100]
+set logscale y
+
+#set mxtics
+#set ytics 0,.5,2
+#set mytics 2
+
+set xrange [1:10000]
+
+set logscale x
+
+
+set format x "%.0e"
+set format y "%.0e"
+
+plot \
+"data/fBq-numerical.txt" u 1:(f(column(2))) title "Numerical original" w lp pt 6 ps 1.5 lw 1 lc rgb "blue",\
+"fBq-numerical.txt" u 1:(f(column(2))) title "Numerical" w lp pt 4 ps 1.5 lw 1 lc rgb "red",\
+"data/fBq-analytical.txt" u 1:2 title "Analytical" w l lw 1 dt 2 lc rgb "black"
+
+ 

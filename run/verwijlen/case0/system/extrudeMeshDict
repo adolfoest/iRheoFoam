@@ -1,0 +1,50 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v1812                                 |
+|   \\  /    A nd           | Web:      www.OpenFOAM.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      extrudeMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+#include "caseParameters"
+
+constructFrom    patch;
+/*
+patch:   patch of sourceCase
+mesh:    patch of sourceCase, retaining original mesh
+surface: surface geometry file
+*/
+
+sourceCase       "$FOAM_CASE";   // uses current case; can be a separate case
+sourcePatches    (front);
+// surface       "geometry.obj"; // constructFrom surface
+
+// If construct from patch: patch to use for back (can be same as sourcePatch)
+exposedPatchName back;
+
+flipNormals      false;
+
+extrudeModel     linearDirection;
+
+nLayers          1;
+expansionRatio   1.0;
+
+// Merge front and back patches, typically for 360 deg wedge extrusion
+mergeFaces       false;
+mergeTol         0;
+
+
+linearDirectionCoeffs
+{
+    direction    (0 0 1);
+    thickness    0.1;
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

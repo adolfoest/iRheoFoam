@@ -1,0 +1,121 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+#includeEtc "caseDicts/mesh/generation/snappyHexMeshDict.cfg"
+#include "caseParameters"
+
+castellatedMesh on;
+snap            on;
+addLayers       off;
+
+geometry
+{
+    cylinder.obj
+    {
+        type triSurfaceMesh;
+        name cylinder;
+        regions
+        {
+            Part1 { name walls; }
+            Part0 { name back; }
+            Part2 { name front; }
+        }
+    }
+}
+
+castellatedMeshControls
+{
+    features
+    (
+        {
+        	file "cylinder.eMesh"; 
+        	level $nRefLevel; 
+    	}
+    );
+
+    refinementSurfaces
+    {
+        cylinder
+        {
+            level       ($nRefLevel $nRefLevel);
+            patchInfo   { type wall; }
+            inGroups    (cylinder);
+
+            regions
+            {
+                Part0
+                {
+                    level ($nRefLevel $nRefLevel);
+                    patchInfo { type patch; }
+                }
+
+                Part1
+                {
+                    level ($nRefLevel $nRefLevel);
+                    patchInfo { type patch; }
+                }
+
+                Part2
+                {
+                    level ($nRefLevel $nRefLevel);
+                    patchInfo { type patch; }
+                }
+            }
+        }
+    }
+
+    refinementRegions
+    {
+
+    }
+
+    locationInMesh (0.0001 0.0002 0.25003);// Offset from (0 0 0) to avoid
+                                     // coinciding with face or edge and keep
+                                     // away from disk itself
+    nCellsBetweenLevels 2;
+    
+    //resolveFeatureAngle 90;
+}
+
+
+snapControls
+{
+    nSmoothPatch 5;
+    tolerance 5;
+    nSolveIter 100;
+    nRelaxIter 10;
+    nFeatureSnapIter 10;
+    implicitFeatureSnap false;
+    explicitFeatureSnap true;
+    multiRegionFeatureSnap false;
+    //strictRegionSnap true;
+}
+
+
+addLayersControls
+{
+}
+
+meshQualityControls
+{
+	#includeEtc "caseDicts/meshQualityDict"
+}
+
+
+mergeTolerance 1e-6;
+
+
+// ************************************************************************* //

@@ -1,0 +1,68 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+
+// Case parameters
+l			#eval{ 25e-03/2e-03 }; 		// rod length
+w			#eval{ 1e-03/2e-03 };		// rod width
+initD		#eval{ 2e-03/2e-03 };		// initial distance between rods							
+b			0.4;
+
+// domain size
+xSize		#eval{ 2.4*$l };
+ySize		$xSize;
+zSize		#eval{ 0.5*$xSize };
+
+x0			#eval{ -0.5*$xSize - $b};
+y0			#eval{ -0.5*$ySize - $b };
+z0			#eval{ -$zSize };
+
+x1			#eval{ 0.5*$xSize + $b};
+y1			#eval{ 0.5*$ySize + $b };
+z1			#eval{ $b };
+
+// initial number of cells
+nx			8;
+ny			$nx;
+nz			#eval{ 0.5*$nx };
+
+nRefLevel	  2;
+
+// snappyHexMesh
+
+	// initialBox
+	ix0    -3.;
+	ix1		3.;
+
+	iy0    -7.;
+	iy1 	7.;
+
+	iz0     -1.;
+	iz1 	10.;
+
+	// refinement levels
+	inrl	4;
+	snrl	5;
+	fnrl	5;
+
+	// innerRegion
+	irx0	-1.8;
+	iry0	-6.6;
+	irz0	-1;
+
+	irx1	1.8;
+	iry1	6.6;
+	irz1	10;
+
+	// location in Mesh
+	px	-0.001;
+	py	-0.001;
+	pz	-2;
+
+cpw 	#eval{ $w/($x1-$x0)*$nx*pow(2., $snrl) };
+
+// ************************************************************************* //

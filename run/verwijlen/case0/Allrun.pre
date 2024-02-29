@@ -1,0 +1,31 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+tar -xzvf constant/triSurface/cylinder.obj.tar.gz -C constant/triSurface/
+tar -xzvf constant/triSurface/movingRod.stl.tar.gz -C constant/triSurface/
+tar -xzvf constant/triSurface/staticRod.stl.tar.gz -C constant/triSurface/
+
+#runApplication surfacePatch
+#mv constant/triSurface/cylinder0_patched.obj constant/triSurface/cylinder.obj
+runApplication surfaceFeatureExtract
+
+runApplication blockMesh
+
+runApplication snappyHexMesh -overwrite
+
+runApplication -s 0 snappyHexMesh -overwrite -dict system/snappyHexMeshDict0
+
+runApplication -s 1 snappyHexMesh -overwrite -dict system/snappyHexMeshDict1
+
+sed -i '/inGroups/d' constant/polyMesh/boundary
+sed -i '29s/.*/        type            patch;/' constant/polyMesh/boundary
+
+runApplication extrudeMesh
+
+sed -i '/inGroups/d' constant/polyMesh/boundary
+sed -i '35s/.*/        type            patch;/' constant/polyMesh/boundary
+
+runApplication makeFaMesh
+
+#------------------------------------------------------------------------------

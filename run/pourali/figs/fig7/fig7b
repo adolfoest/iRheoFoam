@@ -1,0 +1,33 @@
+set terminal pngcairo truecolor enhanced size 800,600 font "Times, 18" 
+set output "fig7b.png" 
+
+lineSize=1
+
+set style line 60 dt 1 lw lineSize lc rgb "black"
+set style line 61 dt 3 lw lineSize lc rgb "black"
+
+set xlabel "Ma"
+set ylabel "{/Symbol D}{/Symbol G}"
+
+set key reverse spacing 1.4 Left samplen 2.5 left bottom
+set logscale x
+
+set ytics 0,0.05,0.3
+set mytics 2
+
+set format y "%.2f"
+set format x "%.0e"
+
+set xrange [0.8:110]
+set yrange [0:0.275]
+set size square
+
+plot \
+"data/deltaGamma.txt" u 1:2 title "Numerical" w lp ls 60 pt 7 ps 1.5,\
+"data/deltaGammaPourali.txt" u 1:2 title "Pourali et al. (2021)" w lp ls 61 pt 6 ps 1.5
+
+
+ 
+
+
+

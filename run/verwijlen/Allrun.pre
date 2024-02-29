@@ -1,0 +1,21 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+(cd case0 && ./Allrun.pre)
+
+while read -r line
+do
+    Ma=$(echo $line | awk '{print $1}')
+    Pes=$(echo $line | awk '{print $2}')
+    Theta=$(echo $line | awk '{print $3}')
+    Tr=$(echo $line | awk '{print $4}')
+    sed "s/MA/$Ma/;s/PES/$Pes/;s/THETA/$Theta/;s/TR/$Tr/" case0/constant/transportProperties.template > case0/constant/transportProperties
+	cpw=$(grep -e '^Mesh resolution' case0/log.blockMesh | awk '{printf "%d", $4}') 
+	cp -rf case0 cpw${cpw}-Ma${Ma}-Pes${Pes}-Theta${Theta}-Tr${Tr}
+	echo "cpw${cpw}-Ma${Ma}-Pes${Pes}-Theta${Theta}-Tr${Tr}"
+done < case0/values
+
+rm -r cpw*/log*
+
+#------------------------------------------------------------------------------

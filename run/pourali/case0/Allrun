@@ -1,0 +1,22 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+runApplication $(getApplication)
+
+Ma=$(grep -e '^Ma' constant/transportProperties | sed 's/.$//' | awk '{print $2}')
+Pes=$(grep -e '^Pes' constant/transportProperties | sed 's/.$//' | awk '{print $2}')
+Bq=$(grep -e '^Bq' constant/transportProperties | sed '$d;s/.$//' | awk '{print $2}')
+Bqk=$(grep -e '^Bqk' constant/transportProperties | sed 's/.$//' | awk '{print $2}')
+
+endTime=$(grep -e '^endTime' system/controlDict | sed 's/.$//' | awk '{print $2}')
+
+cat postProcessing/singleGraph/$endTime/line1_divU_gammaVol.xy postProcessing/singleGraph/$endTime/line2_divU_gammaVol.xy >> "Ma${Ma}-Pes${Pes}-Bq${Bq}-Bqk${Bqk}.txt"
+
+sed -i '/-1 /G' "Ma${Ma}-Pes${Pes}-Bq${Bq}-Bqk${Bq}.txt"
+
+awk '{print $1,FS,$2}' postProcessing/forces/0/force.dat | sed 's/(//g' > "forces-Ma${Ma}-Pes${Pes}-Bq${Bq}-Bqk${Bqk}.txt"
+
+
+#------------------------------------------------------------------------------

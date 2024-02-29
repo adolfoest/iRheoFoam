@@ -1,0 +1,11 @@
+#!/bin/bash
+cd ${0%/*} || exit 1                        # Run from this directory
+
+grep -e '^max(gamma)'  log | awk '{print $2,FS,$4}' > gamma.txt
+
+
+gnuplot<<EOF
+set term dumb
+plot "gamma.txt" u 1 pt '*' notitle,\
+	"gamma.txt" u 2 pt '-' notitle
+EOF

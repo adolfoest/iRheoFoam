@@ -1,0 +1,28 @@
+# lnInclude (symlink) folders - anywhere
+lnInclude
+
+# A hidden file created by the Mac OS X Finder.
+.DS_Store
+
+.vscode/
+
+dynamicCode/
+
+*.dep
+*.swp
+*log*
+
+*.bak
+*.bak[0-9][0-9]
+
+# build folders - anywhere
+linux*Gcc*/
+linux*Icc*/
+mingw*Gcc*/
+linuxARM*/
+darwin*Gcc*/
+darwin*Intel*/
+linuxming*/
+SiCortex*Gcc*/
+solaris*Gcc*/
+SunOS*Gcc*/

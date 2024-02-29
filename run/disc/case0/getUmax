@@ -1,0 +1,13 @@
+#!/bin/bash
+cd ${0%/*} || exit 1                        # Run from this directory
+grep -e '^Courant'  log | awk '{print $9}' > umax.txt
+gnuplot plotumax
+#cat umax.txt
+gnuplot<<EOF
+set term dumb
+set xlabel "steps"
+#set logscale y
+set xtics out
+set ytics out
+plot "umax.txt" pt '*' notitle
+EOF

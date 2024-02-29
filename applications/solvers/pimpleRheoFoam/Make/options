@@ -1,0 +1,25 @@
+EXE_INC = \
+    -I$(LIB_SRC)/finiteVolume/lnInclude \
+    -I$(LIB_SRC)/finiteArea/lnInclude \
+    -I$(LIB_SRC)/meshTools/lnInclude \
+    -I$(LIB_SRC)/sampling/lnInclude \
+    -I$(LIB_SRC)/dynamicMesh/lnInclude \
+    -I$(LIB_SRC)/dynamicFvMesh/lnInclude \
+    -I$(LIB_SRC)/regionFaModels\lnInclude \
+    -I$(LIB_SRC)/fvMotionSolver/lnInclude \
+    -I../../../src/iRheo/lnInclude 
+
+EXE_LIBS = \
+    -lfiniteVolume \
+    -lfiniteArea \
+    -lfvOptions \
+    -lmeshTools \
+    -lsampling \
+    -ldynamicMesh \
+    -ldynamicFvMesh \
+    -lfvMotionSolvers \
+    -ltopoChangerFvMesh \
+    -latmosphericModels \
+    -lregionFaModels \
+    -L$(FOAM_USER_LIBBIN) \
+    -liRheo

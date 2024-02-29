@@ -1,0 +1,4 @@
+#!/bin/bash
+cd ${0%/*} || exit 1                        # Run from this directory
+rm forces.txt
+awk '{print $1,FS,$2}' postProcessing/forces/0/force.dat | sed 's/(//g' > "forces.txt"

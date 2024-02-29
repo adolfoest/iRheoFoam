@@ -1,0 +1,6 @@
+#!/bin/bash
+wmake libso src/iRheo
+wmake libso src/postProcessing
+
+wmake applications/solvers/simpleRheoFoam
+wmake applications/solvers/pimpleRheoFoam

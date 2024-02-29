@@ -1,0 +1,30 @@
+/* Run-time selectable isothermModels */
+isothermModels/isothermModelNew.C
+isothermModels/isothermModel.C
+isothermModels/idealGas/idealGasIsothermModel.C
+isothermModels/Langmuir/LangmuirIsothermModel.C
+isothermModels/Volmer/VolmerIsothermModel.C
+isothermModels/Frumkin/FrumkinIsothermModel.C
+isothermModels/vanderWaals/vanderWaalsIsothermModel.C
+isothermModels/experimental/experimentalIsothermModel.C
+
+/* Interface models */
+interfaceModels/interfaceModelNew.C
+interfaceModels/interfaceModel.C
+interfaceModels/BoussinesqScriven/BoussinesqScriven.C
+interfaceModels/extensionalViscosity/extensionalViscosity.C
+
+/* Moving faMesh */
+movingFaMesh/movingFaMesh.C
+
+/* Boundary conditions */
+boundaryConditions/interfaceVelocity/interfaceVelocityFvPatchVectorField.C
+
+/* Residuals */
+rheoResiduals/rheoResiduals.C
+
+/* Controls */
+pimpleControlRheo/pimpleControlRheo.C
+CorrectPhiRheo/correctUphiBCsRheo.C
+
+LIB = $(FOAM_USER_LIBBIN)/libiRheo

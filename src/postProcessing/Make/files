@@ -1,0 +1,3 @@
+rheoForces/rheoForces.C
+
+LIB = $(FOAM_USER_LIBBIN)/libiRheoFoamPostProcess

@@ -1,0 +1,65 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2112                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      faSolution;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+solvers
+{
+    Us
+    {
+        solver          PBiCGStab;
+        preconditioner  diagonal;
+        tolerance       1e-10;
+        relTol          0;
+    }
+
+    gamma
+    {
+        solver          PBiCGStab;
+        preconditioner  diagonal;
+        tolerance       1e-10;
+        relTol          0;
+    }
+}
+
+solution
+{
+    // Is the interface coupled to a bulk phase? Default is true.
+    coupledToBulk   true;
+    
+    // Tolerance for the difference of the normalized average values of
+    // Us and gamma of two consecutive steps. Default is 1e-06.
+    tolerance       1e-06; 
+    
+    // Number of iterations for smoothing the gamma field. Default is 0.
+    nGamma     	    1;
+    
+    // Weight assigned to the interpolated values of gamma. Default is 0.
+    wGammas         0.1;
+}
+
+relaxationFactors
+{
+    equations
+    {
+        Us      0.1;
+    }
+    fields
+    {
+        gamma  1;
+    }
+}
+
+
+// ************************************************************************* //

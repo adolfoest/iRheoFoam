@@ -1,0 +1,31 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+rm -r forces.txt
+
+for i in Ma*
+do
+	echo $i
+	endTime=$(grep -e '^endTime' $i/system/controlDict | sed 's/.$//' | awk '{print $2}')
+	line=$(grep -rn "^${endTime}" $i/postProcessing/forces)
+	tot=$(echo $line | awk '{print $2}' | sed 's/(//' | awk '{printf "%.8f", $0}')
+	ma=$(echo $line | awk '{print $5}' | sed 's/(//' | awk '{printf "%.8f", $0}')
+	s=$(echo $line | awk '{print $8}' | sed 's/(//'| awk '{printf "%.8f", $0}')
+	bulk=$(echo $line | awk '{print $11}' | sed 's/(//' | awk '{printf "%.8f", $0}')
+
+	j=$(echo $i | sed -e 's#^Ma20-Pes##; s#-Bq0.001-Bqk0.001$##')
+	tot2=$(echo "$tot*2.0" | bc)
+	ma2=$(echo "2.0*$ma" | bc )
+	s2=$(echo "$s*2.0" | bc)
+	bulk2=$(echo "$bulk*2.0" | bc)
+
+	echo "$j $tot2 $ma2 $s2 $bulk2" >> forces.txt
+done
+
+sort -g forces.txt -o forces.txt
+echo
+
+cat forces.txt
+
+#------------------------------------------------------------------------------

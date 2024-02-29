@@ -1,0 +1,20 @@
+#!/bin/sh
+cd "${0%/*}" || exit                                # Run from this directory
+. ${WM_PROJECT_DIR:?}/bin/tools/RunFunctions        # Tutorial run functions
+#------------------------------------------------------------------------------
+
+./clean
+
+runApplication blockMesh
+runApplication surfaceFeatureExtract
+
+runApplication snappyHexMesh -overwrite -dict system/snappyHexMeshDict0
+runApplication -s 1 snappyHexMesh -overwrite -dict system/snappyHexMeshDict1
+
+sed -i '/inGroups/d' constant/polyMesh/boundary
+#sed -i '53s/.*/        type            patch;/' constant/polyMesh/boundary
+
+runApplication makeFaMesh
+
+
+#------------------------------------------------------------------------------
