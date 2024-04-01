@@ -91,13 +91,38 @@ void Foam::movingFaMesh::getEdgeVelocity(const dynamicFvMesh& mesh)
         (
             motion
         );
-    const volScalarField& cellMotionU =
-        vlMotion.cellMotionU();
+    const pointScalarField& pointMotionU = 
+        vlMotion.pointMotionU();
 
-    const scalarField& uCell(cellMotionU.boundaryField()[movingPatch_]);
-    vectorField uEdge(uCell.size(), Zero);
-    uEdge.replace(cmpt_, uCell);
-    ue_ = uEdge;
+    const polyPatch& pp = mesh.boundaryMesh()[patchID_];
+
+    vectorField up(pp.localPoints().size(), Zero);
+    forAll(pp.meshPoints(), i)
+    {
+        const label& pi = pp.meshPoints()[i];
+        up[i].replace(cmpt_, pointMotionU[pi]);
+    }
+
+    const edgeList& aEdges = aMesh_.edges();
+    forAll(aEdges, i)
+    {
+        const label& p0 = aEdges[i][0];
+        const label& p1 = aEdges[i][1];
+
+        const vector& u0 = up[p0];
+        const vector& u1 = up[p1];
+        vector uav = 0.5*(u0 + u1);
+        if (!aMesh_.isInternalEdge(i))
+        {
+            const label& patchi = aMesh_.boundary().whichPatch(i);
+            if (patchi == movingAPatch_)
+            {
+                const label& patchEdgei =
+                    aMesh_.boundary()[patchi].whichEdge(i);
+                ue_[patchEdgei] = uav;
+            } 
+        }   
+    }
 }
 
 void Foam::movingFaMesh::update(const dynamicFvMesh& mesh)
@@ -145,6 +170,12 @@ void Foam::movingFaMesh::update(const dynamicFvMesh& mesh)
                 aMesh_.boundary()[patchi].whichEdge(i);
             meshPhis().boundaryFieldRef()[patchi][patchEdgei] =
                 uav & le.boundaryField()[patchi][patchEdgei];
+            if (patchi == movingAPatch_)
+            {
+                const label& patchEdgei =
+                    aMesh_.boundary()[patchi].whichEdge(i);
+                ue_[patchEdgei] = uav;
+            } 
         }
     }
     
@@ -184,10 +215,10 @@ void Foam::movingFaMesh::makeRelative
     edgeScalarField& phis
 )
 {
-    if (timeIndex2_ != mesh.time().timeIndex())
+    if (timeIndex_ != mesh.time().timeIndex())
     {
         update(mesh);
-        timeIndex2_ = mesh.time().timeIndex();
+        timeIndex_ = mesh.time().timeIndex();
     }
     phis -= meshPhis();
 }
@@ -234,7 +265,7 @@ void Foam::movingFaMesh::correctBC
 {
     if (timeIndex_ != mesh.time().timeIndex())
     {
-        getEdgeVelocity(mesh);
+        update(mesh);
         timeIndex_ = mesh.time().timeIndex();   
     }
     Us.boundaryFieldRef()[movingAPatch_] == ue_;
@@ -263,6 +294,8 @@ void Foam::movingFaMesh::init
         aMesh_,
         dimensionedScalar(dimArea/dimTime, 0.0)
     );
+    ue_.setSize(aMesh_.boundary()[movingAPatch_].size());
+    ue_ = Zero;
 }
 
 Foam::edgeScalarField& Foam::movingFaMesh::meshPhis()
