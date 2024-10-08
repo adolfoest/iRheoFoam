@@ -99,3 +99,7 @@ To facilitate code readability, the mathematical model has been implemented usin
 ## Reference
 Further details on the implementation and validation of the package can be found in
 
+Esteban A, Hernández J, Tajuelo J, Rubio MÁ. A numerical model for the simulation of complex planar Newtonian interfaces. Applied Mathematical Modelling 2025;137:115653. https://doi.org/10.1016/j.apm.2024.115653.
+
+
+
