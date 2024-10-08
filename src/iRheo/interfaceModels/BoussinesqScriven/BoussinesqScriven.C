@@ -96,7 +96,7 @@ Foam::interfaceModels::BoussinesqScriven::nTaut
     tensorField guvb(fvc::grad(U)().boundaryField()[patchID_]);
     
     // Get the projection of grad(U) tangent to the interface
-    guvb -= n_*(n_ & guvb);
+    guvb -= (guvb & n_)*n_;
     areaTensorField tau(fac::grad(Us)*dimensionedScalar(dimVelocity, 0.0));
     if (coupledToBulk_)
     {
