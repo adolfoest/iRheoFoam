@@ -19,9 +19,17 @@ Class
     Foam::rheoResiduals
 
 Description
-    Class to obtain the finite area mesh movement based on the finite
-    volume mesh movement for its corresponding moving patches.
-    For the moment only works with velocityComponentLaplacian.
+    Class to obtain the residuals when solving the surfactant transport
+    and the interfacial momentum balance equations.
+
+    Reference:
+    \verbatim
+        Esteban A, Hernández J, Tajuelo J, Rubio MÁ, 
+        A numerical model for the simulation of complex 
+        planar Newtonian interfaces, 
+        Applied Mathematical Modelling, 2025, 
+        doi 10.1016/j.apm.2024.115653.
+    \endverbatim
 
 SourceFiles
     rheoResiduals.C

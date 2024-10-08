@@ -34,6 +34,15 @@ Description
     This boundary condition provides a velocity condition for cases with
     a planar interface.
 
+    Reference:
+    \verbatim
+        Esteban A, Hernández J, Tajuelo J, Rubio MÁ, 
+        A numerical model for the simulation of complex 
+        planar Newtonian interfaces, 
+        Applied Mathematical Modelling, 2025, 
+        doi 10.1016/j.apm.2024.115653.
+    \endverbatim
+
 Usage
     Example of the boundary condition specification:
     \verbatim
