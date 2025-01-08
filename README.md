@@ -96,6 +96,8 @@ Typical values of the parameters of the numerical model are given below, grouped
 ## Notes
 To facilitate code readability, the mathematical model has been implemented using dimensionless equations. However, to avoid inconsistencies in the solvers, dimensions for the p, U, and Us fields are required in the directory `0` of the run tests.
 
+To execute the scripts, you may need to give them execution permissions. Note that in each test directory exists a folder named `case0` in which additional scripts are present requiring execution permissions.
+
 ## Reference
 Further details on the implementation and validation of the package can be found in
 
