@@ -17,7 +17,7 @@ License
 
 \*---------------------------------------------------------------------------*/
 
-#include "extensionalViscosity.H"
+#include "elastic.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -25,19 +25,19 @@ namespace Foam
 {
 namespace interfaceModels
 {
-    defineTypeNameAndDebug(extensionalViscosity, 0);
+    defineTypeNameAndDebug(elastic, 0);
 
     addToRunTimeSelectionTable
     (
         interfaceModel,
-        extensionalViscosity,
+        elastic,
         components
     );
 }
 }
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
-Foam::interfaceModels::extensionalViscosity::extensionalViscosity
+Foam::interfaceModels::elastic::elastic
 (
     const fvMesh& mesh,
     const word& dictName
@@ -53,33 +53,27 @@ interfaceModel
 
 // * * * * * * * * * * * * * * * * Destructor  * * * * * * * * * * * * * * * //
 
-Foam::interfaceModels::extensionalViscosity::~extensionalViscosity()
+Foam::interfaceModels::elastic::~elastic()
 {}
 
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 Foam::tmp<Foam::faVectorMatrix> 
-Foam::interfaceModels::extensionalViscosity::divTaus
+Foam::interfaceModels::elastic::divTaus
 (
     areaVectorField& Us
 ) const
 {
     tmp<areaTensorField> tDs = Ds(Us);
     areaTensorField& Ds = tDs.ref();
-
-    areaTensorField Dshear = Hadamard(Ds);
-    areaTensorField gradUsMod = Hadamard(fac::grad(Us));
-
     return
     (
-      - fac::div((Theta_ - 0.25*Tr_)*tr(Ds)*Is_)
-      - fac::div(dimensionedScalar(dimViscosity, 2.0)*Dshear)
-      - fam::laplacian(2.*0.25*Tr_, Us)
-      + fac::div(2.*0.25*Tr_*gradUsMod)
+      - fam::laplacian(Bq_, Us)
+      - fac::div(Bqk_*tr(Ds)*Is_)
     );
 }
 
 Foam::tmp<Foam::areaVectorField>
-Foam::interfaceModels::extensionalViscosity::marangoni
+Foam::interfaceModels::elastic::marangoni
 (
     const areaScalarField& gamma
 ) const
@@ -93,16 +87,16 @@ Foam::interfaceModels::extensionalViscosity::marangoni
 }
 
 Foam::tmp<Foam::areaVectorField>
-Foam::interfaceModels::extensionalViscosity::nTaut
+Foam::interfaceModels::elastic::nTaut
 (
     volVectorField& U,
     areaVectorField& Us
 ) const
 {
     tensorField guvb(fvc::grad(U)().boundaryField()[patchID_]);
-
+    
     // Get the projection of grad(U) tangent to the interface
-    guvb -= n_*(n_ & guvb);
+    guvb -= (guvb & n_)*n_;
     areaTensorField tau(fac::grad(Us)*dimensionedScalar(dimVelocity, 0.0));
     if (coupledToBulk_)
     {
@@ -110,17 +104,15 @@ Foam::interfaceModels::extensionalViscosity::nTaut
         {
             tau[i] = guvb[i] + T(guvb[i]);
         }
-        tau.correctBoundaryConditions();
     }
-    
     return 
     (
-        (n_ & -tau)/Bq_.value()
+        (n_ & -tau)
     );
 }
 
 Foam::scalarField
-Foam::interfaceModels::extensionalViscosity::snGradTau
+Foam::interfaceModels::elastic::snGradTau
 (
     const volVectorField& U
 ) const
@@ -135,18 +127,13 @@ Foam::interfaceModels::extensionalViscosity::snGradTau
 }
 
 Foam::tmp<Foam::areaTensorField>
-Foam::interfaceModels::extensionalViscosity::taus
+Foam::interfaceModels::elastic::taus
 (
     areaVectorField& Us
 ) const
 {
     tmp<areaTensorField> tDs = Ds(Us);
     areaTensorField& Ds = tDs.ref();
-
-    areaTensorField Dshear = Hadamard(Ds);
-    areaTensorField gradUs = fac::grad(Us);
-    areaTensorField Dext = gradUs - Hadamard(gradUs);
-
     return
         tmp<areaTensorField>::New
         (
@@ -158,17 +145,12 @@ Foam::interfaceModels::extensionalViscosity::taus
                 IOobject::NO_READ,
                 IOobject::NO_WRITE
             ),
-            Bq_.value()*
-            (
-                (Theta_ - 0.25*Tr_)*tr(Ds)*Is_ 
-              + dimensionedScalar(dimViscosity, 2.0)*Dshear 
-              + 0.5*Tr_*Dext
-            )
+            ((Bqk_ - Bq_)*(Is_ && Ds)*Is_ + 2.*Bq_*Ds)
         );
 }
 
 Foam::tmp<Foam::areaTensorField>
-Foam::interfaceModels::extensionalViscosity::Ds
+Foam::interfaceModels::elastic::Ds
 (
     areaVectorField& Us
 ) const

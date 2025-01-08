@@ -5,7 +5,7 @@ An open-source package for the numerical simulation of the rheological behavior 
 It is based on the Boussinesq-Scriven interface constitutive model and incorporates various solvers for both transient and steady problems. The package permits considering the presence of solid objects placed at the interface and coupling the latter to bulk phases. It has been developed in the OpenFOAM framework and allows for a straightforward implementation of new interface models and solvers, making it a versatile and powerful tool in the field of computational rheology. The main application goal of the package is the numerical simulation of the flow around objects, such as probes, immersed at a complex interface, reproducing given experimental conditions. For this type of problem, several test cases have been performed to validate the package by comparing the results obtained with analytical solutions and numerical and experimental results available in the literature.
 
 ## Requirements
-The package has been developed using OpenFOAM-v2306. However, it has been successfully tested on more recent versions of OpenFOAM. To install version v2306 and other versions, follow the instructions available at:
+The package has been developed using OpenFOAM-v2312. However, it has been successfully tested on more recent versions of OpenFOAM. To install version v2312 and other versions, follow the instructions available at:
 
 https://develop.openfoam.com/Development/openfoam/-/wikis/precompiled
 

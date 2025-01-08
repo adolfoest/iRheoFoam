@@ -21,9 +21,9 @@ movingPatch			movingRod;
 
 // Dimensionless numbers
 Theta 	50;
-Ma		16000;
+Ma		8000;
 Tr		4;
-Pes		2e5;
+Pes		4e5;
 Bq		100;
 
 // Isotherm model for the calculation of the Marangoni modulus

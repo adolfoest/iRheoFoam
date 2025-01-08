@@ -93,6 +93,7 @@ int main(int argc, char *argv[])
         #include "CourantNo.H"
         #include "surfaceCourantNo.H"
         #include "setDeltaT.H"
+        #include "checkDeltaT.H"
 
         ++runTime;
 
@@ -106,7 +107,7 @@ int main(int argc, char *argv[])
                 // Do any mesh changes
                 mesh.controlledUpdate();
 
-                if (mesh.changing() && isDynMesh)
+                if (mesh.changing() && mfamPtr)
                 {
                     MRF.update();
 
@@ -127,10 +128,10 @@ int main(int argc, char *argv[])
                         #include "meshCourantNo.H"
                     }
 
-                    mfam.correctBC(mesh, Us);
+                    mfamPtr->correctBC(Us);
                     Usf = fac::interpolate(Us);
                     phis = Usf & aMesh.Le();
-                    mfam.makeRelative(mesh, phis);
+                    mfamPtr->makeRelative(phis);
                 }
             }
             if(coupledToBulk)

@@ -72,36 +72,64 @@ int main(int argc, char *argv[])
     // * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
 
     Info<< "\nStarting time loop\n" << endl;
-
+    /*scalar ttb = 0;
+    scalar tts = 0;
+    scalar ttg = 0;
+    label titer = 0;
+    label steps = 0;*/
     while (runTime.run())
     {
         loopControl looping(runTime, aMesh.solutionDict(),"solution");
         #include "surfaceCourantNo.H"
         #include "setDeltaT.H"
+        #include "checkDeltaT.H"
 
         ++runTime;
 
         Info<< "Time = " << runTime.timeName() << nl << endl;
         p.storePrevIter(); 
+        /*scalar tb = 0;
+        scalar ts = 0;
+        scalar tg = 0;
+        label iter = 0;*/
 
         while (looping.loop())
         {
             residuals.calculateInit(gamma, Us);
+            //scalar t1 = mesh.time().elapsedCpuTime();
             if(coupledToBulk)
             {
                 #include "UEqn.H"
                 #include "pEqn.H"
             }
-             
+            //scalar t2 = mesh.time().elapsedCpuTime();
+            
             #include "interfStressBalance.H"
+            //scalar t3 = mesh.time().elapsedCpuTime();
             #include "gammaEqn.H"
+            //scalar t4 = mesh.time().elapsedCpuTime();
             residuals.calculate(gamma, Us);
+
+            /*tb += t2-t1;
+            ts += t3-t2;
+            tg += t4-t3;
+            iter++;*/
 
             if (residuals.hasConverged())
             {
                 break;
             }
         }
+        /*reduce(tb, sumOp<scalar>());
+        reduce(ts, sumOp<scalar>());
+        reduce(tg, sumOp<scalar>());
+        reduce(iter, sumOp<label>());
+        Info<<"cpuT: " << runTime.timeName() << tab
+            << tb << tab << ts << tab << tg << tab << iter << endl;
+        ttb += tb;
+        tts += ts;
+        ttg += tg;
+        titer += iter;*/
         
         #include "smoothFields.H"    
         #include "mapToVolFields.H"
@@ -109,7 +137,11 @@ int main(int argc, char *argv[])
         runTime.write();
 
         runTime.printExecutionTime(Info);
+        //steps++;
     }
+    /*Info<<"totalTimes:" << tab
+        << ttb << tab << tts << tab << ttg << tab 
+        << titer << tab << steps << endl;*/
 
     Info<< "End\n" << endl;
 

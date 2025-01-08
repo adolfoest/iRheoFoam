@@ -12,17 +12,17 @@ UsEqn.solve();
 
 // Calculate phis
 Us.correctBoundaryConditions();
-if (isDynMesh)
+if (mfamPtr)
 {
-    mfam.correctBC(mesh, Us);
+    mfamPtr->correctBC(Us);
 }
 Usf = fac::interpolate(Us);
 phis = Usf & aMesh.Le();
 
 //correct Usf
-if (isDynMesh)
+if (mfamPtr)
 {
-    mfam.correct(Usf, phis);
+    mfamPtr->correct(Usf, phis);
 }
 
 // Correct pressure gradient at interface
@@ -57,7 +57,7 @@ if (maxDivUs > 200)
         << exit(FatalError);
 }
 // Make the fluxes relative to the mesh motion
-if (isDynMesh)
+if (mfamPtr)
 {
-    mfam.makeRelative(mesh, phis);
+    mfamPtr->makeRelative(phis);
 }

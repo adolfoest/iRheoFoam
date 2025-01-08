@@ -13,6 +13,7 @@ interfaceModels/interfaceModelNew.C
 interfaceModels/interfaceModel.C
 interfaceModels/BoussinesqScriven/BoussinesqScriven.C
 interfaceModels/extensionalViscosity/extensionalViscosity.C
+interfaceModels/elastic/elastic.C
 
 /* Moving faMesh */
 movingFaMesh/movingFaMesh.C

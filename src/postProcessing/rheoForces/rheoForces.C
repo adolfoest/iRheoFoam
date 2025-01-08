@@ -29,7 +29,6 @@ License
 #include "rheoForces.H"
 #include "fvcGrad.H"
 #include "interfaceModel.H"
-#include "isothermModel.H"
 #include "addToRunTimeSelectionTable.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
@@ -160,11 +159,11 @@ Foam::functionObjects::rheoForces::Pi() const
 {
     areaScalarField gamma = lookupObject<areaScalarField>(gammaName_);
 
-    if (foundObject<isothermModel>("isothermModel"))
+    if (foundObject<interfaceModel>("interfaceModel"))
     {
-        auto& im =
-            lookupObject<isothermModel>("isothermModel");
-        return im.Pi(gamma, Ma_);
+        const interfaceModel& im =
+            lookupObject<interfaceModel>("interfaceModel");
+        return im.Pi(gamma);
     }
     else
     {

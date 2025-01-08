@@ -88,19 +88,17 @@ autoPtr<interfaceModel> interfaceModel
 // Create volume-to surface mapping object
 volSurfaceMapping vsm(aMesh);
 
-bool isDynMesh =  mesh.dynamic();
-
-// Create aMeshPhi corrector object
-
-Info<< "\nCreate movingFaMesh object" << endl;
-movingFaMesh mfam
-(
-    aMesh,
-    transportProperties,
-    interfaceModel->patchID()
-);
-if (isDynMesh)
+movingFaMesh* mfamPtr(nullptr);
+if (mesh.dynamic())
 {
-    mfam.init(mesh);
-    mfam.correctBC(mesh, Us);
+    Info<< "\nCreate movingFaMesh object" << endl;
+    mfamPtr = new movingFaMesh
+    (
+        mesh,
+        aMesh,
+        transportProperties,
+        interfaceModel->patchID()
+    );
+    mfamPtr->correctBC(Us);
 }
+

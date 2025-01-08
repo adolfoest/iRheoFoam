@@ -175,6 +175,22 @@ void Foam::interfaceModel::coupledToBulk(const bool& ctb)
     coupledToBulk_ = ctb;
 }
 
+Foam::tmp<areaScalarField> Foam::interfaceModel::KPi
+(
+    const areaScalarField& gamma
+) const
+{
+    return isotherm_->KPi(gamma);
+}
+
+Foam::tmp<areaScalarField> Foam::interfaceModel::Pi
+(
+    const areaScalarField& gamma
+) const
+{
+    return isotherm_->Pi(gamma, Ma_.value());
+}
+
 // * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * * //
 
 // ************************************************************************* //

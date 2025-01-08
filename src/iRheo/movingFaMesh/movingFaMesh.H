@@ -65,6 +65,8 @@ class movingFaMesh
 {
     // Private Data
 
+        const dynamicFvMesh& mesh_;
+
         const faMesh& aMesh_;
 
         // meshPhi for aMesh
@@ -96,8 +98,6 @@ class movingFaMesh
 
         label timeIndex_;
 
-        label timeIndex2_;
-
         vectorField ue_;
 
         direction cmpt_;
@@ -110,14 +110,14 @@ class movingFaMesh
         //- No copy assignment
         void operator=(const movingFaMesh&) = delete;
 
-        void setBfLabels(const dynamicFvMesh& mesh);
+        void setBfLabels();
 
         // Get the velocity of the moving patch points
-        void update(const dynamicFvMesh& mesh);
+        void update();
 
-        void getEdgeVelocity(const dynamicFvMesh& mesh);
+        direction cmpt();
 
-        direction cmpt(const dynamicFvMesh& mesh);
+        void init();
 
 
 public:
@@ -125,6 +125,7 @@ public:
     //- Constructor
     movingFaMesh
     (
+        const dynamicFvMesh& mesh,
         const faMesh& aMesh,
         const IOdictionary& dict,
         const label& patchID
@@ -138,7 +139,6 @@ public:
 
         void makeRelative
         (
-            const dynamicFvMesh& mesh,
             edgeScalarField& phis
         );
 
@@ -158,7 +158,6 @@ public:
 
         void correctBC
         (
-            const dynamicFvMesh& mesh,
             areaVectorField& Us
         );
 
@@ -168,8 +167,6 @@ public:
         }
 
         edgeScalarField& meshPhis();
-
-        void init(const dynamicFvMesh& mesh);
 
 };
 

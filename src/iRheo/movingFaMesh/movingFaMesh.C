@@ -20,36 +20,36 @@ License
 #include "movingFaMesh.H"
 
 // * * * * * * * * * * * * * * Static Data Members * * * * * * * * * * * * * //
-void Foam::movingFaMesh::setBfLabels(const dynamicFvMesh& mesh)
+void Foam::movingFaMesh::setBfLabels()
 {
     labelUList mpf = aMesh_.boundary().edgeFaces()[movingAPatch_];
-    const labelList& faceOwner = mesh.faceOwner();
+    const labelList& faceOwner = mesh_.faceOwner();
     bfLabels_.setSize(mpf.size(), -1);
 
     forAll(mpf, i)
     {
-        const label& faceI = mesh.boundaryMesh()[patchID_].start() + mpf[i];
+        const label& faceI = mesh_.boundaryMesh()[patchID_].start() + mpf[i];
         const label& cellI = faceOwner[faceI];
 
-        forAll(mesh.cells()[cellI], j)
+        forAll(mesh_.cells()[cellI], j)
         {
-            const label& faceJ = mesh.cells()[cellI][j];
-            if (!mesh.isInternalFace(faceJ))
+            const label& faceJ = mesh_.cells()[cellI][j];
+            if (!mesh_.isInternalFace(faceJ))
             {
-                const label& pf = mesh.boundaryMesh().whichPatch(faceJ);
+                const label& pf = mesh_.boundaryMesh().whichPatch(faceJ);
                 if (pf == movingPatch_)
                 {
-                    const label& k = mesh.boundaryMesh()[pf].whichFace(faceJ);
+                    const label& k = mesh_.boundaryMesh()[pf].whichFace(faceJ);
                     bfLabels_[i] = k;
                 }
             }
         }
     }
 }
-Foam::direction Foam::movingFaMesh::cmpt(const dynamicFvMesh& mesh)
+Foam::direction Foam::movingFaMesh::cmpt()
 {
     const dynamicMotionSolverFvMesh& dynMsh =
-        refCast<const dynamicMotionSolverFvMesh>(mesh);
+        refCast<const dynamicMotionSolverFvMesh>(mesh_);
     motionSolver& motion =
         const_cast<motionSolver&>(dynMsh.motion());
     
@@ -79,10 +79,10 @@ Foam::direction Foam::movingFaMesh::cmpt(const dynamicFvMesh& mesh)
     
 }
 
-void Foam::movingFaMesh::getEdgeVelocity(const dynamicFvMesh& mesh)
+void Foam::movingFaMesh::update()
 {
     const dynamicMotionSolverFvMesh& dynMsh =
-        refCast<const dynamicMotionSolverFvMesh>(mesh);
+        refCast<const dynamicMotionSolverFvMesh>(mesh_);
     motionSolver& motion =
         const_cast<motionSolver&>(dynMsh.motion());
 
@@ -94,53 +94,7 @@ void Foam::movingFaMesh::getEdgeVelocity(const dynamicFvMesh& mesh)
     const pointScalarField& pointMotionU = 
         vlMotion.pointMotionU();
 
-    const polyPatch& pp = mesh.boundaryMesh()[patchID_];
-
-    vectorField up(pp.localPoints().size(), Zero);
-    forAll(pp.meshPoints(), i)
-    {
-        const label& pi = pp.meshPoints()[i];
-        up[i].replace(cmpt_, pointMotionU[pi]);
-    }
-
-    const edgeList& aEdges = aMesh_.edges();
-    forAll(aEdges, i)
-    {
-        const label& p0 = aEdges[i][0];
-        const label& p1 = aEdges[i][1];
-
-        const vector& u0 = up[p0];
-        const vector& u1 = up[p1];
-        vector uav = 0.5*(u0 + u1);
-        if (!aMesh_.isInternalEdge(i))
-        {
-            const label& patchi = aMesh_.boundary().whichPatch(i);
-            if (patchi == movingAPatch_)
-            {
-                const label& patchEdgei =
-                    aMesh_.boundary()[patchi].whichEdge(i);
-                ue_[patchEdgei] = uav;
-            } 
-        }   
-    }
-}
-
-void Foam::movingFaMesh::update(const dynamicFvMesh& mesh)
-{
-    const dynamicMotionSolverFvMesh& dynMsh =
-        refCast<const dynamicMotionSolverFvMesh>(mesh);
-    motionSolver& motion =
-        const_cast<motionSolver&>(dynMsh.motion());
-
-    velocityComponentLaplacianFvMotionSolver& vlMotion =
-        refCast<velocityComponentLaplacianFvMotionSolver>
-        (
-            motion
-        );
-    const pointScalarField& pointMotionU = 
-        vlMotion.pointMotionU();
-
-    const polyPatch& pp = mesh.boundaryMesh()[patchID_];
+    const polyPatch& pp = mesh_.boundaryMesh()[patchID_];
 
     vectorField up(pp.localPoints().size(), Zero);
     forAll(pp.meshPoints(), i)
@@ -180,15 +134,42 @@ void Foam::movingFaMesh::update(const dynamicFvMesh& mesh)
     }
     
 }
+
+void Foam::movingFaMesh::init()
+{
+    movingPatch_  = mesh_.boundaryMesh().findPatchID(movingPatchName_);
+    movingAPatch_ = aMesh_.boundary().findPatchID(movingPatchName_);
+    cmpt_ = cmpt();
+    setBfLabels();
+
+    meshPhisPtr_ = new edgeScalarField
+    ( 
+        IOobject
+        (
+            "meshPhis",
+            mesh_.time().timeName(),
+            mesh_,
+            IOobject::NO_READ,
+            IOobject::AUTO_WRITE
+        ),
+        aMesh_,
+        dimensionedScalar(dimArea/dimTime, 0.0)
+    );
+    ue_.setSize(aMesh_.boundary()[movingAPatch_].size());
+    ue_ = Zero;
+}
+
 // * * * * * * * * * * * * * * * * Constructors  * * * * * * * * * * * * * * //
 
 Foam::movingFaMesh::movingFaMesh
 (
+    const dynamicFvMesh& mesh,
     const faMesh& aMesh,
     const IOdictionary& dict,
     const label& patchID
 )
 :
+    mesh_(mesh),
     aMesh_(aMesh),
     meshPhisPtr_(nullptr),
     movingPatchName_(dict.lookupOrDefault<word>("movingPatch", "movingWire")),
@@ -199,11 +180,10 @@ Foam::movingFaMesh::movingFaMesh
     ubf_(),
     nbf_(),
     timeIndex_(-1),
-    timeIndex2_(-1),
     ue_(),
     cmpt_()
 {
-    
+    init();
 }
 
 // * * * * * * * * * * * * * * * Member Functions  * * * * * * * * * * * * * //
@@ -211,14 +191,13 @@ Foam::movingFaMesh::movingFaMesh
 
 void Foam::movingFaMesh::makeRelative
 (
-    const dynamicFvMesh& mesh,
     edgeScalarField& phis
 )
 {
-    if (timeIndex_ != mesh.time().timeIndex())
+    if (timeIndex_ != mesh_.time().timeIndex())
     {
-        update(mesh);
-        timeIndex_ = mesh.time().timeIndex();
+        update();
+        timeIndex_ = mesh_.time().timeIndex();
     }
     phis -= meshPhis();
 }
@@ -259,43 +238,15 @@ void Foam::movingFaMesh::correctBC
 
 void Foam::movingFaMesh::correctBC
 (
-    const dynamicFvMesh& mesh,
     areaVectorField& Us
 )
 {
-    if (timeIndex_ != mesh.time().timeIndex())
+    if (timeIndex_ != mesh_.time().timeIndex())
     {
-        update(mesh);
-        timeIndex_ = mesh.time().timeIndex();   
+        update();
+        timeIndex_ = mesh_.time().timeIndex();   
     }
     Us.boundaryFieldRef()[movingAPatch_] == ue_;
-}
-
-void Foam::movingFaMesh::init
-(
-    const dynamicFvMesh& mesh
-)
-{
-    movingPatch_  = mesh.boundaryMesh().findPatchID(movingPatchName_);
-    movingAPatch_ = aMesh_.boundary().findPatchID(movingPatchName_);
-    cmpt_ = cmpt(mesh);
-    setBfLabels(mesh);
-
-    meshPhisPtr_ = new edgeScalarField
-    ( 
-        IOobject
-        (
-            "meshPhis",
-            mesh.time().timeName(),
-            mesh,
-            IOobject::NO_READ,
-            IOobject::AUTO_WRITE
-        ),
-        aMesh_,
-        dimensionedScalar(dimArea/dimTime, 0.0)
-    );
-    ue_.setSize(aMesh_.boundary()[movingAPatch_].size());
-    ue_ = Zero;
 }
 
 Foam::edgeScalarField& Foam::movingFaMesh::meshPhis()

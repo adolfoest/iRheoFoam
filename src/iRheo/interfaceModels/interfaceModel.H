@@ -261,6 +261,14 @@ public:
         }
 
         void coupledToBulk(const bool& ctb);
+
+        // return Pi form isothermModel
+        tmp<areaScalarField> KPi(const areaScalarField& gamma) const;
+
+        tmp<areaScalarField> Pi
+        (
+            const areaScalarField& gamma
+        ) const;
 };
 
 

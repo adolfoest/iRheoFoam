@@ -78,7 +78,7 @@ Foam::interfaceModels::BoussinesqScriven::marangoni
     const areaScalarField& gamma
 ) const
 {
-    tmp<areaScalarField> tKPi = isotherm_->KPi(gamma);
+    tmp<areaScalarField> tKPi = KPi(gamma);
     areaScalarField& KPi = tKPi.ref();
     return 
     (
